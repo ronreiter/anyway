@@ -1,34 +1,61 @@
+var INACCURATE_MARKER_OPACITY = 0.5;
+
 var MarkerView = Backbone.View.extend({
 	events : {
-		"click .follow-button" : "clickFollow",
-		"click .unfollow-button" : "clickUnfollow",
-		"click .share-button" : "clickShare",
+		//"click .follow-button" : "clickFollow",
+		//"click .unfollow-button" : "clickUnfollow",
+		//"click .share-button" : "clickShare",
 		"click .delete-button" : "clickDelete"
 	},
 	initialize : function(options) {
 		this.map = options.map;
 		this.model.bind("change:following", this.updateFollowing, this);
+        _.bindAll(this, "clickMarker");
 	},
 	render : function() {
 		var user = this.model.get("user");
 
 		var markerPosition = new google.maps.LatLng(this.model.get("latitude"), this.model.get("longitude"));
+
 		this.marker = new google.maps.Marker({
 			position: markerPosition,
-			map: this.map,
-			//icon: ICONS[this.model.get("type")],
-			title: this.model.get("title")
+			id: this.model.get("id")
 		});
+
+        app.clusterer.addMarker(this.marker);
+        if (app.map.zoom < MINIMAL_ZOOM) {
+            return this;
+        }
+
+        this.marker.setOpacity(this.model.get("locationAccuracy") == 1 ? 1.0 : INACCURATE_MARKER_OPACITY);
+        this.marker.setIcon(this.getIcon());
+		this.marker.setTitle(this.getTitle());
+        this.marker.setMap(this.map);
+        this.marker.view = this;
+
+        app.oms.addMarker(this.marker);
 
 		this.$el.html($("#marker-content-template").html());
 
 		this.$el.width(400);
-		this.$el.find(".title").text(this.model.get("title"));
+		this.$el.find(".title").text(TYPES_MAP[this.model.get("title")]);
 		this.$el.find(".description").text(this.model.get("description"));
-		this.$el.find(".profile-image").attr("src", "https://graph.facebook.com/" + user.facebook_id + "/picture");
+		this.$el.find(".creation-date").text("תאריך: " +
+                moment(this.model.get("created")).format("LLLL"));
+		if (user) {
+		    this.$el.find(".profile-image").attr("src", "https://graph.facebook.com/" + user.facebook_id + "/picture");
+		} else {
+			this.$el.find(".profile-image").attr("src", "/static/img/lamas.png");
+			this.$el.find(".profile-image").attr("width", "50px");
+		}
 		this.$el.find(".type").text(TYPE_STRING[this.model.get("type")]);
-		this.$el.find(".added-by").text("נוסף על ידי " + user.first_name + " " + user.last_name);
-
+		var display_user = "";
+		if (user.first_name && user.last_name) {
+			display_user = user.first_name + " " + user.last_name;
+		} else {
+			display_user = 'הלשכה המרכזית לסטטיסטיקה';
+		}
+		this.$el.find(".added-by").text("נוסף על ידי " + display_user);
 		this.$followButton = this.$el.find(".follow-button");
 		this.$unfollowButton = this.$el.find(".unfollow-button");
 		this.$followerList = this.$el.find(".followers");
@@ -40,26 +67,49 @@ var MarkerView = Backbone.View.extend({
 			this.$deleteButton.show();
 		}
 
-		var markerWindow = new google.maps.InfoWindow({
-			content: this.el
-		});
-
-		google.maps.event.addListener(this.marker, "click", _.bind(function() {
-			if (app.infowindow) {
-				app.infowindow.close();
-			}
-			markerWindow.open(this.map, this.marker);
-			app.infowindow = markerWindow;
-			Backbone.history.navigate("/" + this.model.get("id"), true);
-		}, this));
-
-		google.maps.event.addListener(markerWindow,"closeclick",function(){
-			Backbone.history.navigate("/", true);
-		});
-
 		return this;
-
 	},
+    getIcon : function() {
+        return getIcon(this.model.get("subtype"), this.model.get("severity"));
+    },
+    getTitle : function() {
+        return moment(this.model.get("created")).format("l") +
+            " תאונה " + SEVERITY_MAP[this.model.get("severity")] +
+            ": " + SUBTYPE_STRING[this.model.get("subtype")];
+    },
+    choose : function() {
+        if (app.oms.markersNearMarker(this.marker).length) {
+            new google.maps.event.trigger(this.marker, "click");
+        }
+        new google.maps.event.trigger(this.marker, "click");
+    },
+    getUrl: function () {
+        var dateRange = app.model.get("dateRange");
+        var center = app.map.getCenter();
+        console.log(center);
+        return "/?marker=" + this.model.get("id") + "&" + app.getCurrentUrlParams();
+    }, clickMarker : function() {
+        this.highlight();
+        app.closeInfoWindow();
+
+        app.selectedMarker = this;
+        app.infoWindow = new google.maps.InfoWindow({
+            content: this.el
+        });
+
+        app.infoWindow.open(this.map, this.marker);
+        app.updateUrl(this.getUrl());
+
+        google.maps.event.addListener(app.infoWindow,"closeclick",function(){
+            app.fetchMarkers();
+        });
+    },
+    highlight : function() {
+        this.marker.setAnimation(google.maps.Animation.BOUNCE);
+    },
+    unhighlight : function() {
+        this.marker.setAnimation(null);
+    },
 	updateFollowing : function() {
 		if (this.model.get("following")) {
 			this.$followButton.hide();
@@ -91,11 +141,11 @@ var MarkerView = Backbone.View.extend({
 			name: this.model.get("title"),
 			link: document.location.href,
 			description: this.model.get("description"),
-			caption: TYPE_STRING[this.model.get("type")]
+			caption: SUBTYPE_STRING[this.model.get("subtype")]
 			// picture
 		}, function(response) {
 			if (response && response.post_id) {
-				console.log("published");
+				// console.log("published");
 			}
 		});
 	}

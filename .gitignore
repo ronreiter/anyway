@@ -1,5 +1,8 @@
 # local env
-local.db
+/local.db
+/new_local.db
+/envit.sh
+/local.db-journal
 
 # compiled code
 *.py[cod]
@@ -34,9 +37,20 @@ nosetests.xml
 *.mo
 
 # Mr Developer
-.mr.developer.cfg
-.project
-.pydevproject
-.idea
+/.mr.developer.cfg
+/.project
+/.pydevproject
+/.idea
 
 venv
+
+# vagrant
+/.vagrant
+
+# data files
+/static/data/lms
+
+# webassets cache file
+/static/.webassets-cache
+/static/css/app.min.css
+/static/js/app.min.js

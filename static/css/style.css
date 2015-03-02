@@ -1,3 +1,19 @@
+body, html {
+    font-family: 'Alef', 'sans-serif';
+    position: relative;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+input, button, select, textarea {
+    font-family: 'Alef', 'sans-serif';
+}
+
+div.gm-style {
+    font-family: 'Alef', 'sans-serif';
+}
+
 .context-menu {
 	position: absolute;
 	width: 150px;
@@ -29,6 +45,7 @@
 .sidebar-container ul li {
 	padding: 5px;
 	border-bottom: 1px solid #eee;
+    cursor: pointer;
 }
 
 .followers img {
@@ -57,6 +74,7 @@
 
 .info-window {
 	position: relative;
+  height: 100%;
 }
 
 .followers {
@@ -65,4 +83,53 @@
 
 .description {
 	white-space: pre;
+}
+
+/* for search box: */
+.controls {
+        margin-top: 16px;
+        border: 1px solid transparent;
+        border-radius: 2px 0 0 2px;
+        box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        height: 32px;
+        outline: none;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+      }
+
+      #pac-input {
+        background-color: #fff;
+        padding: 0 11px 0 13px;
+        width: 400px;
+        height: 30px;
+        font-size: 15px;
+        font-weight: 400;
+        text-overflow: ellipsis;
+      }
+
+      #pac-input:focus {
+        border-color: #4d90fe;
+        margin-left: -1px;
+        padding-left: 14px;  /* Regular padding-left + 1. */
+        width: 401px;
+      }
+
+      .pac-container {
+      }
+
+
+.embed-code {
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 20px;
+}
+
+.form-control-wide {
+    width: 400px;
+    direction: ltr;
+    text-align: left;
+}
+
+textarea.form-control-wide {
+    height: 100px;
 }
