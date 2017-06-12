@@ -291,8 +291,8 @@
                 <p class="comments" style="margin:0"></p>
                 <p class="casualties" style="margin:0"></p>
                 <p class="weather" style="margin:0"></p>
-
-
+                <div class="facebook-share-container"></div>
+             
             </div>
         </div>
 
@@ -374,6 +374,23 @@
                             <p class="unit" style="margin:0"></p>
                         </div>
                     </div>
+                    <div class="facebook-share-container"></div>
+                    <!--<div class="fb-share-button"
+                        data-href="{{ url }}"
+                        data-layout="button" 
+                        data-size="small"
+                        data-mobile-iframe="true"
+                         >
+                         <a class="fb-xfbml-parse-ignore"
+                            target="_blank"
+                            href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwww.anyway.co.il%2F&amp;src=sdkpreparse"
+                           >שתף/שתפי
+                        </a>
+                    </div>-->
+                    <!--<div class="fb-share-container">
+                        <div class="fb-like" data-href="http://www.anyway.co.il" data-layout="button_count" data-action="like" data-show-faces="false"
+                                data-share="true" style="margin-top: 10px; margin-bottom: 10px; padding-left: 4px"></div>
+                    </div>-->
                 </div>
             </div>
          </div>
@@ -1006,7 +1023,12 @@
 <script type="text/html" id="sidebarItemTemplate">
     <li>
         <a>
-            <div><div class="gmnoprint" title="<%- icon %>" ></div></div><span class="date"><%- created %></span> -<br> <span class="type"><%- type %></span>
+            <div>
+                <div class="gmnoprint" title="<%- icon %>" ></div>
+            </div>
+            <span class="date"><%- created %></span>
+             -<br> 
+             <span class="type"><%- type %></span>
         </a>
     </li>
 </script>

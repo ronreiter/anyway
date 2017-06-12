@@ -1,6 +1,7 @@
 var INACCURATE_MARKER_OPACITY = 0.5;
 
 var MarkerView = Backbone.View.extend({
+
     events : {
         "click .delete-button" : "clickDelete",
         "click .accordion-container input" : "accordionInputClick"
@@ -110,7 +111,6 @@ var MarkerView = Backbone.View.extend({
             this.$el.find(".added-by").html("מקור: <a href=\'" +
                 provider.url + "\' target=\'_blank\'>" + provider.name + "</a>");
         }
-
         app.oms.addMarker(this.marker);
 
         return this;
@@ -172,6 +172,7 @@ var MarkerView = Backbone.View.extend({
             new google.maps.event.trigger(this.marker, "click");
         }
         new google.maps.event.trigger(this.marker, "click");
+        
     },
     getUrl: function () {
         return "/?marker=" + this.model.get("id") + "&" + app.getCurrentUrlParams();
@@ -207,6 +208,8 @@ var MarkerView = Backbone.View.extend({
         app.selectedMarker = this;
         var infoWindowOffset = this.markerIconType ? new google.maps.Size(0,-25) : new google.maps.Size(0,0);
 
+        // add share facebook button with the markers url to info window;
+        this.$el.find(".facebook-share-container").html('<div style="margin: 5px 0px;" class="fb-share-button" data-href="https://www.anyway.co.il' + encodeURIComponent(that.getUrl()) + '" data-layout="button" data-size="small" data-mobile-iframe="false"><a class="fb-xfbml-parse-ignore" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwww.anyway.co.il' + encodeURIComponent(that.getUrl()) + '">שתף/שתפי</a></div>');
         if (this.marker_clicked) {
             app.infoWindow = new google.maps.InfoWindow({
                 content: that.el,
@@ -214,6 +217,7 @@ var MarkerView = Backbone.View.extend({
             });
             app.infoWindow.open(that.map, that.marker);
             app.updateUrl(that.getUrl());
+
         } else {
             this.marker_clicked = true;
             $.get("/markers/" + this.model.get("id"), function (data) {
