@@ -209,7 +209,9 @@ var MarkerView = Backbone.View.extend({
         var infoWindowOffset = this.markerIconType ? new google.maps.Size(0,-25) : new google.maps.Size(0,0);
 
         // add share facebook button with the markers url to info window;
-        this.$el.find(".facebook-share-container").html('<div style="margin: 5px 0px;" class="fb-share-button" data-href="https://www.anyway.co.il' + encodeURIComponent(that.getUrl()) + '" data-layout="button" data-size="small" data-mobile-iframe="false"><a class="fb-xfbml-parse-ignore" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwww.anyway.co.il' + encodeURIComponent(that.getUrl()) + '">שתף/שתפי</a></div>');
+        var shareButtonString = '<div style="margin: 5px 0px;" class="fb-share-button" data-href="https://www.anyway.co.il' + encodeURIComponent(that.getUrl()) + '" data-layout="button" data-size="small" data-mobile-iframe="false"><a class="fb-xfbml-parse-ignore" target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fwww.anyway.co.il' + encodeURIComponent(that.getUrl()) + '">שתף/שתפי</a></div>';
+        this.$el.find(".facebook-share-container").html(shareButtonString);
+        
         if (this.marker_clicked) {
             app.infoWindow = new google.maps.InfoWindow({
                 content: that.el,
